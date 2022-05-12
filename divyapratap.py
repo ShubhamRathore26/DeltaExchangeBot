@@ -16,13 +16,14 @@ telepot.api._pools = {
 }
 telepot.api._onetime_pool_spec = (urllib3.ProxyManager, dict(proxy_url=proxy_url, num_pools=1, maxsize=1, retries=False, timeout=30))
 
-
 os.environ['TZ'] = 'Asia/Kolkata'
 time.tzset()
 
-config = open('config1.json')
+
+config = open('config.json')
 config = json.load(config)
 tries = 5
+
 
 
 def fetch_id():
@@ -39,7 +40,6 @@ def get_id(symbol):
         if i['symbol'] == symbol:
             return i['id']
 
-
 def deltaLogin():
     deltaClient = DeltaRestClient(
         base_url=config['delta_base_url'],
@@ -50,7 +50,7 @@ def deltaLogin():
 
 
 def message_bot():
-    API_KEY = '5146385327:AAEr1FjQj3JdXDOvWAAfzYxlsgUV47PDO3A'
+    API_KEY = config["telegram_api_key"]
     bot = telebot.TeleBot(API_KEY)
     telegram_bot("TeleBot Started.")
     @bot.message_handler(commands=['isrunning'])
@@ -64,6 +64,7 @@ def message_bot():
     @bot.message_handler(commands=['btcltp'])
     def btcltp(message):
         bot.reply_to(message, get_ltp("BTCUSDT"))
+
     try:
         bot.polling()
     except:
@@ -71,11 +72,13 @@ def message_bot():
         message_bot()
 
 
+
+
 def telegram_bot(bot_message):
     bot_message = str(bot_message)
     print(bot_message)
-    token = '5146385327:AAEr1FjQj3JdXDOvWAAfzYxlsgUV47PDO3A'
-    receiver_id = '1122357235'
+    token = config["telegram_api_key"]
+    receiver_id = config["telegram_chat_id"]
     bot = telepot.Bot(token)
     return bot.sendMessage(receiver_id, bot_message)
 
@@ -224,3 +227,4 @@ def sch_stry():
 
 Thread(target=sch_stry).start()
 Thread(target=message_bot).start()
+
